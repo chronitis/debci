@@ -6,9 +6,16 @@ export DEBIAN_FRONTEND=noninteractive
 
 # enable backports
 if [ ! -f /etc/apt/sources.list.d/backports.list ]; then
-  sed -e 's/\bjessie\b/jessie-backports/' /etc/apt/sources.list > \
+  sed -e 's/\bjessie\b/jessie-backports/' /etc/apt/sources.list | \
+    grep -v security > \
     /etc/apt/sources.list.d/backports.list
 fi
+
+# get backports filelists
+apt-get update
+
+# backports autodep8 and autopkgtest are required to install debci-worker
+apt-get install -qy -t jessie-backports autopkgtest autodep8
 
 # serve debci data
 apt-get install -qy apache2
